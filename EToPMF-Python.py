@@ -12,7 +12,7 @@
                 GitHub Repo:  https://github.com/isakruas/EToPMF-Python/
                 README:       https://github.com/isakruas/EToPMF-Python/blob/master/README.md
 
-    @version    1.0.00
+    @version    1.0.01
 """
 
 import datetime
@@ -32,7 +32,7 @@ print('@link       Homepage:     https://isakruas.blogspot.com/2020/11/EToPMF-Py
 print('            GitHub Repo:  https://github.com/isakruas/EToPMF-Python/')
 print('            README:       https://github.com/isakruas/EToPMF-Python/blob/master/README.md')
 print('')
-print('@version    1.0.00')
+print('@version    1.0.01')
 print('')
 
 # Cálculo da pressão de saturação de vapor (e_s) em (kPa)
@@ -44,7 +44,14 @@ print('')
 
 T = input('Qual a temperatura média do ar (ºC)?\n')
 
-e_s = 0.6108 * 10 ** ((7.5 * float(T)) / (237.3 + float(T)))
+"""
+    @version    1.0.00
+        e_s = 0.6108 * 10 ** ((7.5 * float(T)) / (237.3 + float(T)))
+    @version    1.0.01
+        Coreção na equação do e_s
+"""
+
+e_s = 0.6108 * math.e ** ((17.27 * float(T)) / (237.3 + float(T)))
 
 # Cálculo da pressão atual de vapor (e_a) em (kPa)
 
@@ -89,7 +96,14 @@ dr = 1 + 0.033 * math.cos((2 * math.pi / 365) * float(J))
     delta = Declinação solar (rad)
 """
 
-delta = 0.4093 * math.sin(((2 * math.pi) / 365) * J - 1.405)
+"""
+    @version    1.0.00
+        delta = 0.4093 * math.sin(((2 * math.pi) / 365) * J - 1.405)
+    @version    1.0.01
+        Coreção na equação do delta
+"""
+
+delta = 0.409 * math.sin(((2 * math.pi) / 365) * J - 1.39)
 
 # Cálculo da radiação solar no topo da atmosfera (Ra) em (MJm^-2dia^-1)
 
@@ -103,7 +117,21 @@ print('')
 
 fi = input('Qual a latitude do local (rad)?\n')
 
-omega_s = math.acos(-math.tan(float(fi)) * math.tan(float(delta)))
+"""
+    @version    1.0.00
+        omega_s = math.acos(-math.tan(float(fi)) * math.tan(float(delta)))
+    @version    1.0.01
+        Coreção na equação do omega_s
+        Adição da variavel X
+"""
+
+X = (1 - ((math.tan(float(fi))) ** 2) * ((math.tan(float(delta))) ** 2))
+
+if X <= 0:
+    X = 0.00001
+    pass
+
+omega_s = (math.pi/2) - (math.atan((-math.tan(float(fi)) * math.tan(float(delta)))/(X**0.5)))
 
 Ra = (118.08 / math.pi) * dr * (float(omega_s) * math.sin(float(fi)) * math.sin(float(delta)) + math.cos(float(fi)) * math.cos(float(delta)) * math.sin(float(omega_s)))
 
@@ -213,7 +241,15 @@ if not U_2:
     Delta = Declividade da curva de pressão de vapor em relação à temperatura
 """
 
-Delta = (4098 * (0.6108 * 2.71828 ** ((17.27 * float(T)) / (float(T) + 237.3)))) / (float(T) + 237.3) ** 2
+"""
+    @version    1.0.00
+        Delta = (4098 * (0.6108 * 2.71828 ** ((17.27 * float(T)) / (float(T) + 237.3)))) / (float(T) + 237.3) ** 2
+    @version    1.0.01
+        Coreção na equação do Delta
+"""
+
+
+Delta = (4098 * (0.6108 * math.e ** ((17.27 * float(T)) / (float(T) + 237.3)))) / (float(T) + 237.3) ** 2
 
 # Calculo da pressão atmosférica local (Patm) (kPa)
 
@@ -240,81 +276,81 @@ EToPMF = (0.408 * float(Delta) * (float(Rn) - float(G)) + (
 print('')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Temperatura média do ar (ºC)                                                         | {T}')
+print(f'| Temperatura média do ar [T] (ºC)                                                     | {T}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Pressão de saturação de vapor (kPa)                                                  | {e_s}')
+print(f'| Pressão de saturação de vapor [e_s] (kPa)                                            | {e_s}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Pressão atual de vapor (kPa)                                                         | {e_a}')
+print(f'| Pressão atual de vapor [e_a] (kPa)                                                   | {e_a}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Umidade relativa média do ar (%)                                                     | {UR}')
+print(f'| Umidade relativa média do ar [UR] (%)                                                | {UR}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Distância inversa relativa entre a Terra e o Sol (rad)                               | {dr}')
+print(f'| Distância inversa relativa entre a Terra e o Sol [dr] (rad)                          | {dr}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Dia do ano                                                                           | {J}')
+print(f'| Dia do ano [J]                                                                       | {J}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Declinação solar (rad)                                                               | {delta}')
+print(f'| Declinação solar [delta] (rad)                                                       | {delta}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Radiação solar no topo da atmosfera (Ra) (MJm^-2dia^-1)                              | {Ra}')
+print(f'| Radiação solar no topo da atmosfera [Ra] (MJm^-2dia^-1)                              | {Ra}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Latitude do local (rad)                                                              | {fi}')
+print(f'| Latitude do local [fi] (rad)                                                         | {fi}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Ângulo horário ao nascer do Sol (rad)                                                | {omega_s}')
+print(f'| Ângulo horário ao nascer do Sol [omega_s] (rad)                                      | {omega_s}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Radiação solar incidente na ausência de nuvens (Rso) (MJm^-2dia^-1)                  | {Rso}')
+print(f'| Radiação solar incidente na ausência de nuvens [Rso] (MJm^-2dia^-1)                  | {Rso}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Altitude (m)                                                                         | {z}')
+print(f'| Altitude [z] (m)                                                                     | {z}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Constante de Stefan-Boltzmann (MJm^-2dia^-1)                                         | {sigma}')
+print(f'| Constante de Stefan-Boltzmann [sigma] (MJm^-2dia^-1)                                 | {sigma}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Temperatura máxima do dia (ºC)                                                       | {Tmax}')
+print(f'| Temperatura máxima do dia [Tmax] (ºC)                                                | {Tmax}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Temperatura mínima do dia (ºC)                                                       | {Tmin}')
+print(f'| Temperatura mínima do dia [Tmin] (ºC)                                                | {Tmin}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Radiação solar incidente (Rs) (MJm^-2dia^-1)                                         | {Rs}')
+print(f'| Radiação solar incidente [Rs] (MJm^-2dia^-1)                                         | {Rs}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Coeficiente de reflexão da vegetação (albedo)                                        | {alfa}')
+print(f'| Coeficiente de reflexão da vegetação [alfa] (albedo)                                 | {alfa}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Saldo de radiação (Rn)                                                               | {Rn}')
+print(f'| Saldo de radiação [Rn]                                                               | {Rn}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Saldo de radiação de ondas curtas (Rns) (MJm^-2dia^-1)                               | {Rns}')
+print(f'| Saldo de radiação de ondas curtas [Rns] (MJm^-2dia^-1)                               | {Rns}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Saldo de radiação de ondas longas (Rnl) (MJm^-2dia^-1)                               | {Rnl}')
+print(f'| Saldo de radiação de ondas longas [Rnl] (MJm^-2dia^-1)                               | {Rnl}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Fluxo total diário de calor no solo (G)                                              | {G}')
+print(f'| Fluxo total diário de calor no solo [G]                                              | {G}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Velocidade do vento a 2m de altura (U_2)                                             | {U_2}')
+print(f'| Velocidade do vento a 2m de altura [U_2]                                             | {U_2}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Declividade da curva de pressão de vapor em relação à temperatura (Delta) (kPaºC^-1) | {Delta}')
+print(f'| Declividade da curva de pressão de vapor em relação à temperatura [Delta] (kPaºC^-1) | {Delta}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Pressão atmosférica local (Patm) (kPa)                                               | {Patm}')
+print(f'| Pressão atmosférica local [Patm] (kPa)                                               | {Patm}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| Coeficiente psicrométrico (gama) (kPaºC^-1)                                          | {gama}')
+print(f'| Coeficiente psicrométrico [gama] (kPaºC^-1)                                          | {gama}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
-print(f'| EToPMF                                                                               | {EToPMF}')
+print(f'| O EToPMF é                                                                           | {EToPMF}')
 print(
     '|---------------------------------------------------------------------------------------------------------------')
