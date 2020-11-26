@@ -12,7 +12,7 @@
                 GitHub Repo:  https://github.com/isakruas/EToPMF-Python/
                 README:       https://github.com/isakruas/EToPMF-Python/blob/master/README.md
 
-    @version    1.0.01
+    @version    1.0.02
 """
 
 import datetime
@@ -32,7 +32,7 @@ print('@link       Homepage:     https://isakruas.blogspot.com/2020/11/EToPMF-Py
 print('            GitHub Repo:  https://github.com/isakruas/EToPMF-Python/')
 print('            README:       https://github.com/isakruas/EToPMF-Python/blob/master/README.md')
 print('')
-print('@version    1.0.01')
+print('@version    1.0.02')
 print('')
 
 # Cálculo da pressão de saturação de vapor (e_s) em (kPa)
@@ -43,6 +43,15 @@ print('')
 """
 
 T = input('Qual a temperatura média do ar (ºC)?\n')
+
+if not T:
+    exit('A temperatura média do ar não foi informada\n') 
+else:
+    try:
+        T = float(T)
+    except ValueError:
+        print('')
+        exit('A temperatura média do ar não foi informada\n') 
 
 """
     @version    1.0.00
@@ -63,6 +72,15 @@ print('')
 
 UR = input('Qual a umidade relativa média do ar (%)?\n')
 
+if not UR:
+    exit('A umidade relativa média do ar não foi informada\n') 
+else:
+    try:
+        UR = float(UR)
+    except ValueError:
+        print('')
+        exit('A umidade relativa média do ar não foi informada\n')
+
 e_a = (e_s * float(UR)) / 100
 
 # Cálculo da distância inversa relativa entre a Terra e o Sol (dr) em (rad)
@@ -74,20 +92,29 @@ e_a = (e_s * float(UR)) / 100
 
 
 def dia_do_ano(data_de_entrada):
-    formato = '%d/%m/%Y'
-    data = datetime.datetime.strptime(data_de_entrada, formato)
-    data = data.timetuple()
-    j = data.tm_yday
-    ano = data.tm_year
-    if (ano % 4 == 0 and ano % 100 != 0) or (ano % 400 == 0):
-        return j - 1
-    else:
-        return j
 
+    try:
+        formato = '%d/%m/%Y'
+        data = datetime.datetime.strptime(data_de_entrada, formato)
+        data = data.timetuple()
+        j = data.tm_yday
+        ano = data.tm_year
+        if (ano % 4 == 0 and ano % 100 != 0) or (ano % 400 == 0):
+            return j - 1
+        else:
+            return j
+    except ValueError:
+        print('')
+        exit('A data não foi informada\n') 
 
 print('')
 
-J = dia_do_ano(input('Qual é a data (d/m/Y)?\n'))
+D = input('Qual é a data (d/m/Y)?\n')
+
+if not D:
+    exit('A data não foi informada\n') 
+
+J = dia_do_ano(D)
 
 dr = 1 + 0.033 * math.cos((2 * math.pi / 365) * float(J))
 
@@ -116,6 +143,15 @@ delta = 0.409 * math.sin(((2 * math.pi) / 365) * J - 1.39)
 print('')
 
 fi = input('Qual a latitude do local (rad)?\n')
+
+if not fi:
+    exit('A latitude do local não foi informada\n') 
+else:
+    try:
+        fi = float(fi)
+    except ValueError:
+        print('')
+        exit('A latitude do local não foi informada\n') 
 
 """
     @version    1.0.00
@@ -146,6 +182,15 @@ print('')
 
 z = input('Qual a altitude (m)?\n')
 
+if not z:
+    exit('A altitude não foi informada\n') 
+else:
+    try:
+        z = float(z)
+    except ValueError:
+        print('')
+        exit('A altitude não foi informada\n')  
+
 Rso = (0.75 + float(z) * 2 * 10 ** -5) * Ra
 
 # Cálculo do saldo de radiação de ondas longas (Rnl)
@@ -163,9 +208,28 @@ print('')
 
 Tmax = input('Qual a temperatura máxima do dia (ºC)?\n')
 
+if not Tmax:
+    exit('A temperatura máxima do dia não foi informada\n') 
+else:
+    try:
+        Tmax = float(Tmax)
+    except ValueError:
+        print('')
+        exit('A temperatura máxima do dia não foi informada\n') 
+
 print('')
 
 Tmin = input('Qual a temperatura mínima do dia (ºC)?\n')
+
+if not Tmin:
+    exit('A temperatura mínima do dia não foi informada\n') 
+else:
+    try:
+        Tmin = float(Tmin)
+    except ValueError:
+        print('')
+        exit('A temperatura mínima do dia não foi informada\n')
+
 
 print('')
 
